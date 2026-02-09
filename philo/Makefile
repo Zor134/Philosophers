@@ -7,8 +7,8 @@ SRCS = main.c ft_atoi.c
 OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
-LDFLAGS = -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g
+LDFLAGS = -fsanitize=thread -g
 
 
 # Couleurs (optionnel)
