@@ -8,7 +8,7 @@ OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g
-LDFLAGS = -fsanitize=thread -g
+LDFLAGS = #-fsanitize=thread -g
 
 
 # Couleurs (optionnel)

@@ -45,13 +45,43 @@ void	parsing(int ac, char **av, t_data *data)
 
 void	*routine(void *arg)
 {
-	arg = NULL;
-	int	i = 0;
+	t_philo	*philo;
 
-	while (++i < 10000000)
-		;
-	printf("%d\n", i);
-	return (NULL);
+	philo = arg;
+	if (philo->id % 2 == 1)
+	{
+		pthread_mutex_lock(&philo->data->forks[philo->id - 1]);
+		printf("philo %d has locked fork %d\n",philo->id, philo->id - 1);
+		pthread_mutex_lock(&philo->data->forks[philo->id]);
+		printf("philo %d has locked fork %d\n",philo->id, philo->id);
+		pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
+		pthread_mutex_unlock(&philo->data->forks[philo->id]);
+	}
+	while (1)
+	{
+		usleep(100);
+		if (philo->id == 0)
+		{
+			pthread_mutex_lock(&philo->data->forks[philo->data->number_of_philosophers]);
+			pthread_mutex_lock(&philo->data->forks[philo->id]);
+			printf("philo %d has locked fork %d and %d\n",philo->id, philo->id, philo->data->number_of_philosophers);
+			pthread_mutex_unlock(&philo->data->forks[philo->data->number_of_philosophers]);
+			pthread_mutex_unlock(&philo->data->forks[philo->id]);
+			printf("philo %d has unlocked fork %d and %d\n",philo->id, philo->id, philo->data->number_of_philosophers);
+		}
+		else
+		{
+			pthread_mutex_lock(&philo->data->forks[philo->id - 1]);
+			pthread_mutex_lock(&philo->data->forks[philo->id]);
+			printf("philo %d has locked fork %d and %d\n",philo->id, philo->id, philo->id - 1);
+			pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
+			pthread_mutex_unlock(&philo->data->forks[philo->id]);
+			printf("philo %d has unlocked fork %d and %d\n",philo->id, philo->id, philo->id - 1);
+
+		}
+	}
+		
+	return(NULL);
 }
 
 t_philo	*init_philo(t_data *data, int id)
@@ -63,26 +93,24 @@ t_philo	*init_philo(t_data *data, int id)
 	philo->meals_eaten = 0;
 	philo->last_meal_time = 0;
 	philo->data = data;
-	philo->thread = 0;
 	return (philo);
 }
 
 int	init_n_philo(t_data *data)
 {
 	int		i;
-	int		t;
 	t_philo	*philo;
 
 	data->philos = malloc(sizeof(pthread_t) * data->number_of_philosophers);
+	data->forks = malloc(sizeof(pthread_mutex_t) * data->number_of_philosophers);
 	i = -1;
 
 	while (++i < data->number_of_philosophers)
 	{
 		philo = init_philo(data, i);
-		printf("%d test\n", data->number_of_philosophers);
-		t = pthread_create(&data->philos[i], NULL, routine, NULL);
-		if (t != 0)
+		if (pthread_create(&data->philos[i], NULL, routine, philo) != 0)
 			return (printf("Thread creation failed\n"));
+		pthread_mutex_init(&data->forks[i], NULL);
 	}
 	// pthread_join(data->philos[0], NULL);
 	return (0);
@@ -91,7 +119,7 @@ int	init_n_philo(t_data *data)
 int	main(int ac, char **av)
 {
 	t_data			*data;
-	struct timeval	tv;
+	// struct timeval	tv;
 
 	if ((ac != 5 && ac != 6) || arg_are_only_digits(av) != 0)
 		return (printf("Error, please refer to README to execute\n"));
@@ -99,11 +127,11 @@ int	main(int ac, char **av)
 	if (data == NULL)
 		return (1);
 	parsing(ac, av, data);
-	gettimeofday(&tv, NULL);
-	printf("%ld\n", tv.tv_sec);
+	// gettimeofday(&tv, NULL);
+	// printf("%ld\n", tv.tv_sec);
 	init_n_philo(data);
+	pthread_join(data->philos[data->number_of_philosophers - 1], NULL);
 	free(data);
-	// while (1)
-	// 	;
+	// printf("test\n");
 	return (0);
 }

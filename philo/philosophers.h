@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: laudinot <laudinot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/26 20:20:24 by louis             #+#    #+#             */
-/*   Updated: 2026/02/09 14:38:34 by laudinot         ###   ########.fr       */
+/*   Updated: 2026/02/10 17:54:45 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ typedef struct s_philo
 	int				id;
 	int				meals_eaten;	
 	long			last_meal_time;
-	pthread_t		thread;
 	struct s_data	*data;
 }	t_philo;
 
@@ -36,6 +35,7 @@ typedef struct s_data
 	int		time_to_sleep;
 	int		number_of_times_each_philosopher_must_eat;
 	t_philo	*philo;
+	pthread_mutex_t *forks;
 	pthread_t *philos;
 }	t_data;
 
