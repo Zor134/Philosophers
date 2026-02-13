@@ -12,110 +12,41 @@
 
 #include "../philosophers.h"
 
-int	arg_are_only_digits(char **av)
+void	*routine(void *arg)
 {
-	int	i;
-	int	y;
+	t_philo *philo;
 
-	i = 0;
-	while (av[++i])
+	philo = arg;
+	while (philo->meals_eaten < philo->data->max_eat)
 	{
-		y = -1;
-		while (av[i][++y])
-		{
-			if ((av[i][y] < '0' || av[i][y] > '9') && av[i][y] != '+')
-				return (printf
-					("Please enter NUMERIC and POSITIVE arguments only.\n"));
-		}
+		safe_print(philo->data, philo->id, philo->meals_eaten);
+		pthread_mutex_lock(&philo->meals_mtx);
+		philo->meals_eaten++;
+		pthread_mutex_unlock(&philo->meals_mtx);
 	}
-	return (0);
+	while (1)
+		;
+	return(NULL);
 }
 
 void	parsing(int ac, char **av, t_data *data)
 {
+		// printf("test\n");
+ 
+	pthread_mutex_init(&data->stop_simulation, NULL);
+	pthread_mutex_init(&data->print , NULL);
 	data->number_of_philosophers = ft_atoi(av[1]);
 	data->time_to_die = ft_atoi(av[2]);
 	data->time_to_eat = ft_atoi(av[3]);
 	data->time_to_sleep = ft_atoi(av[4]);
 	if (ac == 6)
-		data->number_of_times_each_philosopher_must_eat = ft_atoi(av[5]);
+		data->max_eat = ft_atoi(av[5]);
 	else
-		data->number_of_times_each_philosopher_must_eat = -1;
+		data->max_eat = -1;
+	init_philo(data);
+	init_check_if_finished(data);
+	usleep(200);
 }
-
-void	*routine(void *arg)
-{
-	t_philo	*philo;
-
-	philo = arg;
-	if (philo->id % 2 == 1)
-	{
-		pthread_mutex_lock(&philo->data->forks[philo->id - 1]);
-		printf("philo %d has locked fork %d\n",philo->id, philo->id - 1);
-		pthread_mutex_lock(&philo->data->forks[philo->id]);
-		printf("philo %d has locked fork %d\n",philo->id, philo->id);
-		pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
-		pthread_mutex_unlock(&philo->data->forks[philo->id]);
-	}
-	while (1)
-	{
-		usleep(100);
-		if (philo->id == 0)
-		{
-			pthread_mutex_lock(&philo->data->forks[philo->data->number_of_philosophers]);
-			pthread_mutex_lock(&philo->data->forks[philo->id]);
-			printf("philo %d has locked fork %d and %d\n",philo->id, philo->id, philo->data->number_of_philosophers);
-			pthread_mutex_unlock(&philo->data->forks[philo->data->number_of_philosophers]);
-			pthread_mutex_unlock(&philo->data->forks[philo->id]);
-			printf("philo %d has unlocked fork %d and %d\n",philo->id, philo->id, philo->data->number_of_philosophers);
-		}
-		else
-		{
-			pthread_mutex_lock(&philo->data->forks[philo->id - 1]);
-			pthread_mutex_lock(&philo->data->forks[philo->id]);
-			printf("philo %d has locked fork %d and %d\n",philo->id, philo->id, philo->id - 1);
-			pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
-			pthread_mutex_unlock(&philo->data->forks[philo->id]);
-			printf("philo %d has unlocked fork %d and %d\n",philo->id, philo->id, philo->id - 1);
-
-		}
-	}
-		
-	return(NULL);
-}
-
-t_philo	*init_philo(t_data *data, int id)
-{
-	t_philo	*philo;
-
-	philo = malloc(sizeof(t_philo));
-	philo->id = id;
-	philo->meals_eaten = 0;
-	philo->last_meal_time = 0;
-	philo->data = data;
-	return (philo);
-}
-
-int	init_n_philo(t_data *data)
-{
-	int		i;
-	t_philo	*philo;
-
-	data->philos = malloc(sizeof(pthread_t) * data->number_of_philosophers);
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->number_of_philosophers);
-	i = -1;
-
-	while (++i < data->number_of_philosophers)
-	{
-		philo = init_philo(data, i);
-		if (pthread_create(&data->philos[i], NULL, routine, philo) != 0)
-			return (printf("Thread creation failed\n"));
-		pthread_mutex_init(&data->forks[i], NULL);
-	}
-	// pthread_join(data->philos[0], NULL);
-	return (0);
-}
-
 int	main(int ac, char **av)
 {
 	t_data			*data;
@@ -128,10 +59,15 @@ int	main(int ac, char **av)
 		return (1);
 	parsing(ac, av, data);
 	// gettimeofday(&tv, NULL);
-	// printf("%ld\n", tv.tv_sec);
-	init_n_philo(data);
-	pthread_join(data->philos[data->number_of_philosophers - 1], NULL);
-	free(data);
-	// printf("test\n");
+
+	// int	i = -1;
+	// while(++i < data->number_of_philosophers)
+	// {
+	// 	pthread_join(*data->head_philo->philo, NULL);
+	// 	data->head_philo = data->head_philo->next;
+	// }
+	printf("test\n");
+	pthread_mutex_lock(&data->stop_simulation);
+	pthread_mutex_unlock(&data->stop_simulation);
 	return (0);
 }
