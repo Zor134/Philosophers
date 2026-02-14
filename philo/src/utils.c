@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: laudinot <laudinot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 14:53:58 by laudinot          #+#    #+#             */
-/*   Updated: 2026/02/13 16:29:59 by laudinot         ###   ########.fr       */
+/*   Updated: 2026/02/14 16:18:40 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	safe_print(t_data *data, int i, int meals_eaten)
 	pthread_mutex_lock(&data->print);
 	printf("Philo n%d has eaten meal number %d\n", i, meals_eaten);
 	pthread_mutex_unlock(&data->print);
-	// if (i == data->number_of_philosophers)
+	// if (i == data->number_of_philos)
 	// 	pthread_mutex_unlock(data->stop_simulation);
 
 }
@@ -51,7 +51,7 @@ void	*check_if_finished(void *arg)
 	tmp = data->head_philo;
 	count = 0;
 	pthread_mutex_lock(&data->stop_simulation);
-	while (count < data->number_of_philosophers)
+	while (count < data->number_of_philos)
 	{
 		pthread_mutex_lock(&tmp->meals_mtx);
 		if (tmp->meals_eaten == data->max_eat)

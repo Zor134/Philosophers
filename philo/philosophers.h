@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: laudinot <laudinot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/26 20:20:24 by louis             #+#    #+#             */
-/*   Updated: 2026/02/13 16:29:43 by laudinot         ###   ########.fr       */
+/*   Updated: 2026/02/14 16:28:19 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-	int		number_of_philosophers;
+	int		number_of_philos;
 	int		time_to_die;
 	int		time_to_eat;
 	int		time_to_sleep;
@@ -42,7 +42,7 @@ typedef struct s_data
 	pthread_mutex_t print;
 	pthread_mutex_t stop_simulation;
 	pthread_t		*philo;
-	pthread_t		*check_if_finished;
+	pthread_t		check_if_finished;
 }	t_data;
 // mutex print message philo + soit tu joins thread to main soit mutex dans main 
 
@@ -54,6 +54,6 @@ void	ft_lstadd_back(t_philo **lst, t_philo *new, int	len);
 int		arg_are_only_digits(char **av);
 void	safe_print(t_data *data, int i, int meals_eaten);
 void	*check_if_finished(void *arg);
-void	init_check_if_finished(t_data *data);
+void    free_all(t_data *data);
 
 #endif

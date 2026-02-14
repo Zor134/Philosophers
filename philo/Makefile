@@ -3,12 +3,12 @@ EXEC = Philo
 SRC_DIR = src
 OBJ_DIR = obj
 
-SRCS = main.c ft_atoi.c lst.c utils.c init.c
+SRCS = main.c ft_atoi.c lst.c utils.c init.c free.c
 OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g
-LDFLAGS = -fsanitize=thread -g
+LDFLAGS = #-fsanitize=thread -g
 
 
 # Couleurs (optionnel)

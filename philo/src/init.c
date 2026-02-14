@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: laudinot <laudinot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 14:55:08 by laudinot          #+#    #+#             */
-/*   Updated: 2026/02/13 16:28:40 by laudinot         ###   ########.fr       */
+/*   Updated: 2026/02/14 16:28:19 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ void	create_thread(t_data *data)
 	
 	tmp = data->head_philo;
 	i = -1;
-	data->philo = malloc(data->number_of_philosophers * sizeof(pthread_t));
+	data->philo = malloc(data->number_of_philos * sizeof(pthread_t));
 	if (!data->philo)
 		return;
-	while (++i < data->number_of_philosophers)
+	while (++i < data->number_of_philos)
 	{
 		if (i % 2 == 0)
 		{
@@ -45,7 +45,7 @@ void	create_thread(t_data *data)
 	usleep(500);
 	tmp = data->head_philo;
 	i = -1;
-	while (++i < data->number_of_philosophers)
+	while (++i < data->number_of_philos)
 	{
 		if (i % 2 == 1)
 		{
@@ -62,21 +62,14 @@ void	init_philo(t_data *data)
 	int	i;
 	t_philo *tmp;
 	i = -1;
-	data->head_philo = malloc(sizeof(t_philo) * data->number_of_philosophers);
-	while (++i < data->number_of_philosophers)
+	data->head_philo = malloc(sizeof(t_philo) * data->number_of_philos);
+	while (++i < data->number_of_philos)
 	{
 		tmp = malloc(sizeof(t_philo));
 		if (!tmp)
 			return;
 		init_node(data, tmp, i);
-		ft_lstadd_back(&data->head_philo, tmp, data->number_of_philosophers);
+		ft_lstadd_back(&data->head_philo, tmp, data->number_of_philos);
 	}
 	create_thread(data);
-}
-
-void	init_check_if_finished(t_data *data)
-{
-	data->check_if_finished = malloc(sizeof(pthread_t));
-	pthread_create(data->check_if_finished, NULL, check_if_finished, data);
-
 }
